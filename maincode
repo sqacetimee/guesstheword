@@ -1,0 +1,118 @@
+import java.io.*;
+import java.util.*;
+
+public class wordguess {
+
+    public static void main(String[] args) throws IOException, InterruptedException {
+        BufferedReader fileReader = new BufferedReader(new FileReader("words.txt"));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        // declare variables 
+        String chosenword, guess;
+        int i = 0;
+        int lives = 6;
+        // create an ArrayList to store words read from the file
+        ArrayList<String> words = new ArrayList<>();
+        //read words from the file and add them to the ArrayList
+        while (fileReader.ready()) {
+            words.add(fileReader.readLine());
+        }
+        //convert arraylist to char array
+        
+        // randomly select a word from the ArrayList
+        chosenword = words.get((int) (Math.random() * words.size()));
+        // convert the chosen word into an array of characters
+        char[] letters = chosenword.toCharArray();
+        // create an array to store the user's progress in guessing the word
+        char[] answer = new char [letters.length];
+        // create an array representing the alphabet
+        char[] alphabet = {'a', 'b', 'c', 'd', 'e', 'f', 'g',
+                          'h', 'i', 'j', 'k', 'l', 'm', 'n',
+                          'o', 'p', 'q', 'r', 's', 't', 'u',
+                          'v', 'w', 'x', 'y', 'z'};
+
+        while(i < letters.length){
+            answer[i] = '-';
+            i++;
+        }
+        // sisplay a welcome message
+        System.out.println("-----------------------------------------------------");
+        System.out.println("Welcome to Guess the Word!");
+        // main loop
+        boolean over = false;
+        while(!over){
+            Thread.sleep(120);
+            System.out.println("-----------------------------------------------------");
+            Thread.sleep(120);
+            System.out.println();
+            System.out.println("Letters Used:");
+            Thread.sleep(120);
+            System.out.println();
+            // display the alphabet
+            for(int k = 0; k < alphabet.length; k++ ){
+                System.out.print(alphabet[k] + " ");
+                Thread.sleep(10);
+            }
+            System.out.println();
+            System.out.println("-----------------------------------------------------");
+            System.out.println();
+            System.out.println("Guess a letter: ");
+            System.out.println();
+
+            guess = reader.readLine();
+            System.out.println();
+            // check if the input is valid
+            boolean find = false;
+            if (guess.length() != 1 || !Character.isLetter(guess.charAt(0))) {
+                System.out.println("Invalid input. Enter 1 letter at a time.");
+            } else {
+                i = 0;
+                // check if the guess matches any letters in the chosen word
+                while (i < letters.length) {
+                    if (Character.toLowerCase(letters[i]) == Character.toLowerCase(guess.charAt(0))) {
+                        answer[i] = letters[i];
+                        find = true;
+                    }
+                    i++;
+                }
+                // if the guess is incorrect, - 1 from number of lives
+                if (!find) {
+                    lives--;
+                    System.out.println("WRONG");
+                }
+                // marks the guessed letter as used in the alphabet
+                alphabet[guess.charAt(0) - 'a'] = '-';
+            }
+            // display the user's progress in guessing the word
+            System.out.println("-----------------------------------------------------");
+            boolean finished = true;
+            for(int j = 0; j < answer.length; j++){
+                if(answer[j] == '-'){
+                    System.out.print(" _");
+                    Thread.sleep(120);
+                    finished = false;
+                } else {
+                    System.out.print(" " + answer[j]);
+                }
+            }
+            System.out.println();
+            System.out.println("-----------------------------------------------------");
+            // display the number of remaining lives
+            System.out.println("Guesses Left: " + lives);
+            // check if the word has been guessed correctly
+            if(finished) {
+                System.out.println();
+                System.out.println("Correct, that is the word.");
+                finished = true;
+                over = true;
+            }
+            // check if the player has run out of lives
+            if(lives == 0){
+                System.out.println();
+                System.out.println("You lose. Learn more words.");
+                System.out.println();
+                System.out.println("Here is the correct word: " + chosenword);
+                over = true;
+            }
+        }
+    }
+}
